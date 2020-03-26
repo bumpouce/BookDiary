@@ -1,9 +1,18 @@
 #!/usr/bin/env ruby
+require_relative '../config/environment.rb'
 
-require_relative "../lib/api_communicator.rb"
-require_relative "../lib/command_line_interface.rb"
 
 welcome
-character = get_character_from_user
+
+user = set_user
+input = get_command
+
+while input != "e"
+    execute_command(input, user)
+    input = get_command
+end
+
+goodbye(user)
+
 # binding.pry
-show_character_movies(character)
+0

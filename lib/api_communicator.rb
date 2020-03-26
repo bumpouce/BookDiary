@@ -1,47 +1,27 @@
-require 'rest-client'
-require 'json'
-require 'pry'
+def find_a_book_online
+  search = get_search_parameters
 
-def get_character_movies_from_api(character_name)
+  query = build_search_string(search)
+  res = search_books_by(query)
 
-  character = find_character_data(character_name)
-  get_film_data(character["films"])
-
+  book = Book.retrieve_or_add_book(res)
+  book.id
 end
 
-def find_character_data (character_name)
-  response_string = RestClient.get("http://www.swapi.co/api/people/?search=#{character_name}")
+
+def search_books_by(search_string)
+  response_string = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{search_string}")
   response_hash = JSON.parse(response_string)
-  response_hash["results"][0]
-end
-find_character_data("R2")
 
-def get_film_data(film_urls)  
-  film_hash = []
-  film_urls.select do |film|
-    res = RestClient.get(film)
-    film_hash << JSON.parse(res)
+  if response_hash["totalItems"] == 0
+    response_string = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=isbn:0399226907") #if no results were found, use very hungry caterpillar instead
+    response_hash = JSON.parse(response_string)
+  else
+    response_hash
   end
-  film_hash
-end
-
-def print_movies(films)
-  output = []
-  sorted = []
-  films.each do |film|
-    output << [film["release_date"], "#{film["title"].upcase}   directed by #{film["director"]}, released: #{film["release_date"]}"]
-  end
-  output.sort.each {|out| sorted << out[1]}
-  sorted
 end
 
 
-def show_character_movies(character)
-  films = get_character_movies_from_api(character)
-  puts print_movies(films)
+def build_search_string(input)
+  input.join
 end
-
-## BONUS
-
-# that `get_character_movies_from_api` method is probably pretty long. Does it do more than one job?
-# can you split it up into helper methods?
