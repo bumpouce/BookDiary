@@ -1,4 +1,4 @@
-class BookDiary < ActiveRecord::Base
+class Diary < ActiveRecord::Base
     belongs_to :readers
     belongs_to :books
 
@@ -6,24 +6,24 @@ class BookDiary < ActiveRecord::Base
         puts "Adding a book to your diary"
         puts "---------------------------"
         puts
-        BookDiary.new_bookdiary_entry_from_input(user.id)
+        Diary.new_diary_entry_from_input(user.id)
     end
 
     def self.delete_an_entry_interface(user)
         puts "Deleting a book from your diary"
         puts "---------------------------"
         puts
-        BookDiary.delete_an_entry(user.id)
+        Diary.delete_an_entry(user.id)
     end
 
-    def self.display_bookdiary_interface(user)
+    def self.display_diary_interface(user)
         puts "Here's what you've read, #{user.first_name}!"
         puts "---------------------------"
         puts
-        BookDiary.display_bookdiary(user.id)
+        Diary.display_diary(user.id)
     end
 
-    def self.new_bookdiary_entry_from_input(user_id)
+    def self.new_diary_entry_from_input(user_id)
         book_id = find_a_book_online
         puts
         puts "I found #{Book.all.where(id:book_id)[0].title}, by #{Book.all.where(id:book_id)[0].author}."
@@ -47,8 +47,8 @@ class BookDiary < ActiveRecord::Base
         end
     end
 
-    def self.display_bookdiary(user_id)
-        res = BookDiary.all.where(user_id: user_id)
+    def self.display_diary(user_id)
+        res = Diary.where(user_id: user_id)
         sorted = res.sort_by{|entry|entry.rating}.reverse
         sorted.each do |entry| 
             my_book_id = entry.book_id.to_i
@@ -59,7 +59,7 @@ class BookDiary < ActiveRecord::Base
     end
 
     def self.are_you_rereading?(user_id, book_id)
-        if self.all.where({user_id:user_id, book_id:book_id}) != []
+        if self.where({user_id:user_id, book_id:book_id}) != []
             puts "It looks like you've read this book before.  Did you re-read it? [y]es or [n]o"
             (gets.chomp.chr.downcase == "y") ?  true : false
         else
@@ -76,7 +76,7 @@ class BookDiary < ActiveRecord::Base
         else
             puts
             puts "Deleting entry: #{selection}"
-            BookDiary.destroy(selection)
+            Diary.destroy(selection)
         end
     end
 
@@ -85,8 +85,8 @@ class BookDiary < ActiveRecord::Base
         title = gets.chomp.capitalize
 
         books = []
-        entries = self.all.where(user_id:user_id)        
-        books = entries.map {|entry| {entry.id=> "#{Book.all.find(entry.book_id).title}, #{Book.all.find(entry.book_id).author}, #{entry.read_on}"}}
+        entries = self.where(user_id:user_id)        
+        books = entries.map {|entry| {entry.id=> "#{Book.find(entry.book_id).title}, #{Book.find(entry.book_id).author}, #{entry.read_on}"}}
         books.keep_if { |check| check.values[0].downcase.include? title.downcase }
 
         puts

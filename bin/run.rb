@@ -7,6 +7,8 @@ welcome
 user = set_user
 input = get_command
 
+binding.pry 
+
 while input != "e"
     execute_command(input, user)
     input = get_command

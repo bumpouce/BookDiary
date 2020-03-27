@@ -8,7 +8,7 @@ require 'active_record'
 require 'rake'
 require 'date'
 require 'faker'
-
+require 'smarter_csv'
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
 ActiveRecord::Base.logger = nil

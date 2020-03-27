@@ -72,11 +72,11 @@ def execute_command (input, user)
   case input
 
   when "a"
-    BookDiary.add_a_book_interface(user)
+    Diary.add_a_book_interface(user)
   when "d"
-    BookDiary.delete_an_entry_interface(user)
+    Diary.delete_an_entry_interface(user)
   when "v"
-    BookDiary.display_bookdiary_interface(user)
+    Diary.display_diary_interface(user)
   when "s"
     Reader.display_reading_statistics_interface(user)
   when "g"

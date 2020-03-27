@@ -1,6 +1,6 @@
 class Book < ActiveRecord::Base
-    has_many :book_diaries
-    has_many :readers, through: :book_diaries
+    has_many :diaries
+    has_many :readers, through: :diaries
 
     def self.retrieve_or_add_book(info)
         title = info["items"][0]["volumeInfo"]["title"]

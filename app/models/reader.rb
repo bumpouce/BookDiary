@@ -1,6 +1,6 @@
 class Reader < ActiveRecord::Base
-    has_many :book_diaries
-    has_many :books, through: :book_diaries
+    has_many :diaries
+    has_many :books, through: :diaries
 
     def self.create_reader
         username = ""
@@ -45,12 +45,12 @@ class Reader < ActiveRecord::Base
         puts "Your username is currently #{user.username}"
         puts "What's the new username?"
         update = gets.chomp
-        Reader.all.find(user.id).update(username:update)
+        Reader.find(user.id).update(username:update)
       else
         puts "Your first name is currently #{user.first_name}"
         puts "What's the new first name?"
         update = gets.chomp
-        Reader.all.find(user.id).update(first_name:update)
+        Reader.find(user.id).update(first_name:update)
       end
     end
 
@@ -73,9 +73,10 @@ class Reader < ActiveRecord::Base
         return "[no book diary entries]"
       end
       count = Hash.new(0)
-      this = BookDiary.all.where(user_id: user_id)
-      this.map{|entry| Book.all.find(entry.book_id).subject}.each{|subject| count[subject] += 1}
+      this = Diary.where(user_id: user_id)
+      this.map{|entry| Book.find(entry.book_id).subject}.each{|subject| count[subject] += 1}
       count.max_by{|k,v| v}.empty? ? "Emptiness" : count.max_by{|k,v| v}[0].split("\"")[1]
+      # binding.pry
     end
 
     def most_read_author (user_id)
@@ -83,13 +84,13 @@ class Reader < ActiveRecord::Base
         return "[no book diary entries]"
       end
       count = Hash.new(0)
-      this = BookDiary.all.where(user_id: user_id)
-      this.map{|entry| Book.all.find(entry.book_id).author}.each{|subject| count[subject] += 1}
+      this = Diary.where(user_id: user_id)
+      this.map{|entry| Book.find(entry.book_id).author}.each{|subject| count[subject] += 1}
       count.max_by{|k,v| v}[0]
     end
 
     def book_count(user_id)
-      BookDiary.all.where(user_id: user_id).count
+      Diary.where(user_id: user_id).count
     end
 end
   
